@@ -1,0 +1,23 @@
+# Job to submit a Ray program from a pod outside a running Ray cluster.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ray-test-job
+  namespace: ray
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ray
+          image: ray-client:1.6.0-py37-modin
+          command: [ "/bin/bash", "-c", "--" ]
+          args:
+            - python job_example.py
+          env:
+            - name: RAY_CLUSTER_HEAD_HOST
+              value: ray-head
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
